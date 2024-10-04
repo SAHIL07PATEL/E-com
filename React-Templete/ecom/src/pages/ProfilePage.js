@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Edit2, LogOut } from 'lucide-react';
+import { Edit2, LogOut, Mail, Lock, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -51,50 +51,82 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8 flex justify-center">
-      <div className="w-full max-w-lg">
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="px-6 py-4 text-center bg-indigo-600 text-white">
-            <div className="h-20 w-20 mx-auto bg-blue-500 text-4xl text-white flex justify-center items-center rounded-full">
-              {user?.name?.slice(0, 1).toUpperCase()}
+    <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white shadow-xl rounded-lg overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-8 text-white">
+            <div className="flex items-center">
+              <div className="h-24 w-24 rounded-full bg-white text-indigo-600 flex items-center justify-center text-4xl font-bold shadow-lg">
+                {user?.name?.slice(0, 1).toUpperCase()}
+              </div>
+              <div className="ml-6">
+                <h1 className="text-3xl font-bold">{user?.name}</h1>
+                <p className="text-indigo-100">{user?.email}</p>
+                <p className="text-sm text-indigo-200 mt-1">Member since {user?.createdAt ? new Date(user.createdAt).getFullYear() : 'N/A'}</p>
+              </div>
             </div>
-            <h2 className="mt-4 text-2xl font-semibold">{user?.name}</h2>
-            <p className="text-gray-200">{user?.email}</p>
           </div>
-          <div className="p-6">
-            <div className="mb-4">
-              <h3 className="text-lg font-medium text-gray-700">Account Information</h3>
-              <div className="mt-3 bg-gray-50 p-4 rounded-lg">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Password</span>
-                  <button className="text-indigo-600 hover:text-indigo-800 flex items-center text-sm">
-                    <Edit2 className="h-4 w-4 mr-1" /> Change Password
-                  </button>
-                </div>
-              </div>
-              <div className="mt-3 bg-gray-50 p-4 rounded-lg">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Email Preferences</span>
-                  <button className="text-indigo-600 hover:text-indigo-800 flex items-center text-sm">
-                    <Edit2 className="h-4 w-4 mr-1" /> Edit Preferences
-                  </button>
-                </div>
-              </div>
-            </div>
 
-            <div className="flex justify-end">
-              <button className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                <Edit2 className="h-4 w-4 mr-2" /> Edit Profile
-              </button>
+          {/* Profile Information */}
+          <div className="px-6 py-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Profile Information</h2>
+            
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <Mail className="h-6 w-6 text-gray-500 mr-3" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Email Address</p>
+                    <p className="text-sm text-gray-500">{user?.email}</p>
+                  </div>
+                </div>
+                <button className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                  Change
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <Lock className="h-6 w-6 text-gray-500 mr-3" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Password</p>
+                    <p className="text-sm text-gray-500">Last changed 3 months ago</p>
+                  </div>
+                </div>
+                <button className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                  Update
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <Bell className="h-6 w-6 text-gray-500 mr-3" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Notifications</p>
+                    <p className="text-sm text-gray-500">Manage your notification preferences</p>
+                  </div>
+                </div>
+                <button className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                  Configure
+                </button>
+              </div>
             </div>
           </div>
-          <div className="bg-gray-100 px-6 py-4 flex justify-between items-center">
-            <span className="text-gray-600 text-sm">Member since {user?.createdAt ? user.createdAt.slice(0, 4) : 'N/A'}</span>
+
+          {/* Footer */}
+          <div className="px-6 py-4 bg-gray-50 flex justify-between items-center">
+            <button
+              onClick={() => {/* Handle edit profile */}}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <Edit2 className="h-4 w-4 mr-2" /> Edit Profile
+            </button>
             <button
               onClick={handleLogout}
-              className="inline-flex items-center text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg hover:bg-indigo-200"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              <LogOut className="h-4 w-4 mr-1" /> Log Out
+              <LogOut className="h-4 w-4 mr-2" /> Log Out
             </button>
           </div>
         </div>
