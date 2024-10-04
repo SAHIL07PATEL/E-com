@@ -1,11 +1,11 @@
-import logo from './logo.svg';
+import AdminProductManagement from './AdminProductManagement';
 import './App.css';
-import ProductForm from './ProductForm';
+// import AdminProductManagement from './AdminProductManagement';
 
 function App() {
   return (
     <div className="App">
-     <ProductForm/>
+     <AdminProductManagement/>
     </div>
   );
 }
