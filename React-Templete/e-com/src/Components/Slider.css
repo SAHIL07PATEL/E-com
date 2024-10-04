@@ -1,0 +1,14 @@
+.slick1 .item-slick1 {
+    background-size: cover;
+    background-position: center;
+    height: 100vh; /* Full-screen height */
+}
+
+.layer-slick1 {
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+.animated[data-appear="fadeInDown"] {
+    animation: fadeInDown 1s ease forwards;
+}
