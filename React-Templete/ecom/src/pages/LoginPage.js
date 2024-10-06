@@ -12,7 +12,7 @@ const LoginPage = () => {
     e.preventDefault();
     setError(null); // Clear previous error
     setLoading(true); // Start loading
-
+  
     try {
       const response = await fetch('https://e-come-hyh8.onrender.com/person/login', {
         method: 'POST',
@@ -21,24 +21,24 @@ const LoginPage = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Login failed. Please check your credentials.');
       }
-
+  
       const data = await response.json();
       const token = data.token;
       sessionStorage.setItem('token', token); // Store token in session storage
-
+  
       // Redirect upon successful login
       navigate('/profile');
     } catch (error) {
       setError(error.message); // Set error message
-      
     } finally {
       setLoading(false); // Stop loading after request completes
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
