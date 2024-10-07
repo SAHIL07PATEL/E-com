@@ -85,10 +85,11 @@ const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Function to handle user logout
   const handleLogout = () => {
-    sessionStorage.clear(); // Clear session storage to log the user out
-    navigate('/login'); // Redirect to the login page
+    console.log('Logout function called');
+    sessionStorage.clear();
+    console.log('Session storage cleared');
+    navigate('/login');
   };
 
   const handleEditProfile = (updatedData) => {
@@ -98,8 +99,8 @@ const ProfilePage = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        setUser(response.data.user); // Update user state with new data
-        setIsModalOpen(false); // Close modal
+        setUser(response.data.user);
+        setIsModalOpen(false);
       })
       .catch((error) => {
         console.error('Failed to update profile', error);
@@ -110,15 +111,15 @@ const ProfilePage = () => {
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (!token) {
-      navigate('/login'); // Redirect to login if there's no token
+      navigate('/login');
     } else {
       axios
         .get('https://e-come-hyh8.onrender.com/person/user', {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          setUser(response.data.user); // Set user data
-          setLoading(false); // Stop loading spinner
+          setUser(response.data.user);
+          setLoading(false);
         })
         .catch((error) => {
           setError('Failed to fetch user data.');
@@ -176,7 +177,7 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setIsModalOpen(true)} // Open modal on click
+                  onClick={() => setIsModalOpen(true)}
                   className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
                 >
                   Update
@@ -201,7 +202,7 @@ const ProfilePage = () => {
           {/* Footer */}
           <div className="px-6 py-4 bg-gray-50 flex justify-between items-center">
             <button
-              onClick={() => setIsModalOpen(true)} // Open modal on click
+              onClick={() => setIsModalOpen(true)}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <Edit2 className="h-4 w-4 mr-2" /> Edit Profile
