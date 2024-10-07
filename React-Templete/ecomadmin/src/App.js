@@ -1,13 +1,16 @@
-import AdminProductManagement from './AdminProductManagement';
-import './App.css';
-// import AdminProductManagement from './AdminProductManagement';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import AdminProductManagement from './components/AdminProductManagement';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-     <AdminProductManagement/>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/admin/products" element={<AdminProductManagement />} />
+        <Route path="/" element={<Navigate to="/admin/products" replace />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
