@@ -6,19 +6,20 @@ const AdminProductManagement = () => {
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
   const [newProduct, setNewProduct] = useState({
-    productName: '',
+    name: '',
     description: '',
     price: '',
-    ImgUrl: '',
-    category: { name: '', description: '' },
-    availableOptions: [{ name: '', values: [''] }],
+    imgUrl: '',
+    category: '',
+    options: [{ name: '', values: [''] }]
   });
   const [newSKU, setNewSKU] = useState({
+    optionValues: {},
     quantity: '',
-    product: '',
-    category: { name: '' },
-    options: [{ name: '', value: '' }],
+    price: ''
   });
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [skuDetails, setSkuDetails] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
@@ -47,13 +48,15 @@ const AdminProductManagement = () => {
         setAlertMessage('Product created successfully');
         fetchProducts();
         setNewProduct({
-          productName: '',
+          name: '',
           description: '',
           price: '',
-          ImgUrl: '',
-          category: { name: '', description: '' },
-          availableOptions: [{ name: '', values: [''] }],
+          imgUrl: '',
+          category: '',
+          options: [{ name: '', values: [''] }]
         });
+      } else {
+        setAlertMessage('Failed to create product');
       }
     } catch (error) {
       setAlertMessage('Error creating product');
@@ -62,130 +65,117 @@ const AdminProductManagement = () => {
 
   const handleCreateSKU = async (e) => {
     e.preventDefault();
+    if (!selectedProduct) {
+      setAlertMessage('Please select a product first');
+      return;
+    }
     try {
-      const response = await fetch(`${API_BASE_URL}/products/sku`, {
+      const response = await fetch(`${API_BASE_URL}/products/${selectedProduct._id}/sku-from-options`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSKU),
       });
       if (response.ok) {
         setAlertMessage('SKU created successfully');
+        fetchSkuDetails(selectedProduct._id); // Fetch SKU details after creating
         setNewSKU({
+          optionValues: {},
           quantity: '',
-          product: '',
-          category: { name: '' },
-          options: [{ name: '', value: '' }],
+          price: ''
         });
+      } else {
+        setAlertMessage('Failed to create SKU');
       }
     } catch (error) {
       setAlertMessage('Error creating SKU');
     }
   };
 
+  const fetchSkuDetails = async (productId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/products/${productId}/skus`);
+      const data = await response.json();
+      setSkuDetails(data);
+    } catch (error) {
+      setAlertMessage('Failed to fetch SKU details');
+    }
+  };
+
   const handleDeleteProduct = async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/products/delete/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
         setAlertMessage('Product deleted successfully');
         fetchProducts();
+      } else {
+        setAlertMessage('Failed to delete product');
       }
     } catch (error) {
       setAlertMessage('Error deleting product');
     }
   };
 
-  // Handle SKU Option changes
-  const handleSKUOptionChange = (index, field, value) => {
-    const updatedOptions = [...newSKU.options];
+  const handleAddOption = () => {
+    setNewProduct({
+      ...newProduct,
+      options: [...newProduct.options, { name: '', values: [''] }]
+    });
+  };
+
+  const handleOptionChange = (index, field, value) => {
+    const updatedOptions = [...newProduct.options];
     updatedOptions[index][field] = value;
-    setNewSKU((prevState) => ({
-      ...prevState,
-      options: updatedOptions,
-    }));
+    setNewProduct({ ...newProduct, options: updatedOptions });
   };
 
-  // Add new SKU Option
-  const addSKUOption = () => {
-    setNewSKU((prevState) => ({
-      ...prevState,
-      options: [...prevState.options, { name: '', value: '' }],
-    }));
+  const handleAddOptionValue = (index) => {
+    const updatedOptions = [...newProduct.options];
+    updatedOptions[index].values.push('');
+    setNewProduct({ ...newProduct, options: updatedOptions });
   };
 
-  // Remove SKU Option
-  const removeSKUOption = (index) => {
-    const updatedOptions = [...newSKU.options];
-    updatedOptions.splice(index, 1);
-    setNewSKU((prevState) => ({
-      ...prevState,
-      options: updatedOptions,
-    }));
-  };
-
-  // Functions for handling product available options:
-
-  // Handle change for option name
-  const handleOptionNameChange = (index, value) => {
-    const updatedOptions = [...newProduct.availableOptions];
-    updatedOptions[index].name = value;
-    setNewProduct({ ...newProduct, availableOptions: updatedOptions });
-  };
-
-  // Handle change for option values (comma-separated)
-  const handleOptionValueChange = (index, value) => {
-    const updatedOptions = [...newProduct.availableOptions];
-    updatedOptions[index].values = value.split(',').map((v) => v.trim()); // Split by comma
-    setNewProduct({ ...newProduct, availableOptions: updatedOptions });
-  };
-
-  // Add a new option value (defaulting to an empty string)
-  const addOptionValue = (optionIndex) => {
-    const updatedOptions = [...newProduct.availableOptions];
-    updatedOptions[optionIndex].values.push(''); // Add a new empty value
-    setNewProduct({ ...newProduct, availableOptions: updatedOptions });
-  };
-
-  // Remove an option value
-  const removeOptionValue = (optionIndex, valueIndex) => {
-    const updatedOptions = [...newProduct.availableOptions];
-    updatedOptions[optionIndex].values.splice(valueIndex, 1); // Remove the value
-    setNewProduct({ ...newProduct, availableOptions: updatedOptions });
-  };
-
-  // Add a new option field (name and value set)
-  const addOptionField = () => {
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
-      availableOptions: [...prevProduct.availableOptions, { name: '', values: [''] }],
-    }));
+  const handleOptionValueChange = (optionIndex, valueIndex, value) => {
+    const updatedOptions = [...newProduct.options];
+    updatedOptions[optionIndex].values[valueIndex] = value;
+    setNewProduct({ ...newProduct, options: updatedOptions });
   };
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-center mb-8">Admin Product Management</h1>
+    <div className="p-8 bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Admin Product Management</h1>
 
-        {alertMessage && <div className="mb-4 text-red-500 text-center">{alertMessage}</div>}
+        {alertMessage && (
+          <div className="mb-6 p-4 text-red-500 text-center bg-red-50 rounded-lg shadow">
+            {alertMessage}
+          </div>
+        )}
 
         {/* Tabs */}
-        <div className="flex justify-center mb-6 space-x-4">
+        <div className="flex justify-center space-x-6 mb-8">
           <button
             onClick={() => setActiveTab('products')}
-            className={`py-2 px-6 rounded-lg text-white font-medium ${activeTab === 'products' ? 'bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+            className={`py-3 px-6 rounded-full font-semibold transition-all duration-200 ${
+              activeTab === 'products' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+            }`}
           >
             Products
           </button>
           <button
             onClick={() => setActiveTab('create-product')}
-            className={`py-2 px-6 rounded-lg text-white font-medium ${activeTab === 'create-product' ? 'bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+            className={`py-3 px-6 rounded-full font-semibold transition-all duration-200 ${
+              activeTab === 'create-product' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+            }`}
           >
             Create Product
           </button>
           <button
             onClick={() => setActiveTab('create-sku')}
-            className={`py-2 px-6 rounded-lg text-white font-medium ${activeTab === 'create-sku' ? 'bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+            className={`py-3 px-6 rounded-full font-semibold transition-all duration-200 ${
+              activeTab === 'create-sku' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+            }`}
           >
             Create SKU
           </button>
@@ -194,27 +184,27 @@ const AdminProductManagement = () => {
         {/* Products List */}
         {activeTab === 'products' && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Product List</h2>
-            <table className="min-w-full bg-white table-auto border border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Product List</h2>
+            <table className="min-w-full bg-white rounded-lg shadow-lg">
               <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-4 py-2 border">Name</th>
-                  <th className="px-4 py-2 border">Price</th>
-                  <th className="px-4 py-2 border">Category</th>
-                  <th className="px-4 py-2 border">Options</th>
-                  <th className="px-4 py-2 border">Actions</th>
+                <tr className="bg-gray-200 text-left">
+                  <th className="px-6 py-3 text-gray-800">Product Name</th>
+                  <th className="px-6 py-3 text-gray-800">Price</th>
+                  <th className="px-6 py-3 text-gray-800">Category</th>
+                  <th className="px-6 py-3 text-gray-800">Options</th>
+                  <th className="px-6 py-3 text-gray-800">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => (
-                  <tr key={product._id} className="text-center border-t">
-                    <td className="px-4 py-2">{product.productName}</td>
-                    <td className="px-4 py-2">${product.price}</td>
-                    <td className="px-4 py-2">{product.category?.name}</td>
-                    <td className="px-4 py-2">
-                      {product.availableOptions.length > 0 ? (
-                        <ul>
-                          {product.availableOptions.map((option, i) => (
+                  <tr key={product._id} className="border-t border-gray-200 hover:bg-gray-50">
+                    <td className="px-6 py-4">{product.name}</td>
+                    <td className="px-6 py-4">${product.price}</td>
+                    <td className="px-6 py-4">{product.category}</td>
+                    <td className="px-6 py-4">
+                      {product.options?.length > 0 ? (
+                        <ul className="list-disc pl-4">
+                          {product.options.map((option, i) => (
                             <li key={i}>
                               <strong>{option.name}:</strong> {option.values.join(', ')}
                             </li>
@@ -224,12 +214,21 @@ const AdminProductManagement = () => {
                         <span>No Options</span>
                       )}
                     </td>
-                    <td className="px-4 py-2">
+                    <td className="px-6 py-4">
                       <button
                         onClick={() => handleDeleteProduct(product._id)}
-                        className="text-red-500 hover:underline"
+                        className="text-red-500 hover:underline mr-2"
                       >
                         Delete
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setActiveTab('create-sku');
+                        }}
+                        className="text-blue-500 hover:underline"
+                      >
+                        Add SKU
                       </button>
                     </td>
                   </tr>
@@ -241,162 +240,179 @@ const AdminProductManagement = () => {
 
         {/* Create Product Form */}
         {activeTab === 'create-product' && (
-          <form onSubmit={handleCreateProduct} className="mt-6">
-            <h2 className="text-xl font-semibold mb-4">Create Product</h2>
-            <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Product Name"
-                value={newProduct.productName}
-                onChange={(e) => setNewProduct({ ...newProduct, productName: e.target.value })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <textarea
-                placeholder="Description"
-                value={newProduct.description}
-                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <input
-                type="number"
-                placeholder="Price"
-                value={newProduct.price}
-                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <input
-                type="text"
-                placeholder="Image URL"
-                value={newProduct.ImgUrl}
-                onChange={(e) => setNewProduct({ ...newProduct, ImgUrl: e.target.value })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <input
-                type="text"
-                placeholder="Category Name"
-                value={newProduct.category.name}
-                onChange={(e) => setNewProduct({ ...newProduct, category: { ...newProduct.category, name: e.target.value } })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <textarea
-                placeholder="Category Description"
-                value={newProduct.category.description}
-                onChange={(e) => setNewProduct({ ...newProduct, category: { ...newProduct.category, description: e.target.value } })}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-
-              {/* Available Options */}
-              <h3 className="text-lg font-semibold">Available Options</h3>
-              {newProduct.availableOptions.map((option, index) => (
-                <div key={index} className="border p-4 rounded bg-gray-50 mb-4">
+          <form onSubmit={handleCreateProduct} className="mt-6 space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800">Create Product</h2>
+            <input
+              type="text"
+              placeholder="Product Name"
+              value={newProduct.name}
+              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <textarea
+              placeholder="Product Description"
+              value={newProduct.description}
+              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <input
+              type="number"
+              placeholder="Price"
+              value={newProduct.price}
+              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={newProduct.imgUrl}
+              onChange={(e) => setNewProduct({ ...newProduct, imgUrl: e.target.value })}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <input
+              type="text"
+              placeholder="Category"
+              value={newProduct.category}
+              onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Options</h3>
+              {newProduct.options.map((option, index) => (
+                <div key={index} className="mb-4 border p-4 rounded-md">
                   <input
                     type="text"
                     placeholder="Option Name"
                     value={option.name}
-                    onChange={(e) => handleOptionNameChange(index, e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mb-2"
+                    onChange={(e) => handleOptionChange(index, 'name', e.target.value)}
+                    className="w-full mb-2 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
-                  <input
-                    type="text"
-                    placeholder="Option Values (comma-separated)"
-                    value={option.values.join(', ')} // Join values with comma for display
-                    onChange={(e) => handleOptionValueChange(index, e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mb-2"
-                  />
-                  <button type="button" onClick={() => addOptionValue(index)} className="text-blue-500 hover:underline">
-                    Add Value
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => removeOptionValue(index, 0)} // Remove first value for demonstration
-                    className="text-red-500 hover:underline ml-2"
-                  >
-                    Remove First Value
-                  </button>
+                  <div>
+                    <h4 className="font-semibold mb-2">Values</h4>
+                    {option.values.map((value, valueIndex) => (
+                      <input
+                        key={valueIndex}
+                        type="text"
+                        placeholder="Value"
+                        value={value}
+                        onChange={(e) => handleOptionValueChange(index, valueIndex, e.target.value)}
+                        className="w-full mb-2 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => handleAddOptionValue(index)}
+                      className="text-blue-500 hover:underline mb-2"
+                    >
+                      Add Value
+                    </button>
+                  </div>
                 </div>
               ))}
-              <button type="button" onClick={addOptionField} className="text-blue-500 hover:underline">
+              <button
+                type="button"
+                onClick={handleAddOption}
+                className="text-blue-500 hover:underline"
+              >
                 Add Option
               </button>
-
-              <button type="submit" className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
-                Create Product
-              </button>
             </div>
+            <button
+              type="submit"
+              className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Create Product
+            </button>
           </form>
         )}
 
         {/* Create SKU Form */}
-        {activeTab === 'create-sku' && (
-          <form onSubmit={handleCreateSKU} className="mt-6">
-            <h2 className="text-xl font-semibold mb-4">Create SKU</h2>
-            <div className="space-y-4">
-              <input
-                type="number"
-                placeholder="Quantity"
-                value={newSKU.quantity}
-                onChange={(e) => setNewSKU({ ...newSKU, quantity: e.target.value })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <input
-                type="text"
-                placeholder="Product ID"
-                value={newSKU.product}
-                onChange={(e) => setNewSKU({ ...newSKU, product: e.target.value })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-              <input
-                type="text"
-                placeholder="Category Name"
-                value={newSKU.category.name}
-                onChange={(e) => setNewSKU({ ...newSKU, category: { name: e.target.value } })}
-                required
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-
-              {/* SKU Options */}
-              <h3 className="text-lg font-semibold">Options</h3>
-              {newSKU.options.map((option, index) => (
-                <div key={index} className="border p-4 rounded bg-gray-50 mb-4">
-                  <input
-                    type="text"
-                    placeholder="Option Name"
-                    value={option.name}
-                    onChange={(e) => handleSKUOptionChange(index, 'name', e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mb-2"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Option Value"
-                    value={option.value}
-                    onChange={(e) => handleSKUOptionChange(index, 'value', e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mb-2"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeSKUOption(index)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Remove Option
-                  </button>
-                </div>
-              ))}
-              <button type="button" onClick={addSKUOption} className="text-blue-500 hover:underline">
-                Add Option
-              </button>
-
-              <button type="submit" className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
-                Create SKU
-              </button>
-            </div>
+        {activeTab === 'create-sku' && selectedProduct && (
+          <form onSubmit={handleCreateSKU} className="mt-6 space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800">Create SKU for {selectedProduct.name}</h2>
+            {selectedProduct.options.map((option) => (
+              <div key={option.name}>
+                <h3 className="font-semibold">{option.name}</h3>
+                {option.values.map((value) => (
+                  <label key={value} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      onChange={(e) => {
+                        const updatedValues = { ...newSKU.optionValues };
+                        if (e.target.checked) {
+                          updatedValues[option.name] = value;
+                        } else {
+                          delete updatedValues[option.name];
+                        }
+                        setNewSKU({ ...newSKU, optionValues: updatedValues });
+                      }}
+                    />
+                    <span className="ml-2">{value}</span>
+                  </label>
+                ))}
+              </div>
+            ))}
+            <input
+              type="number"
+              placeholder="Quantity"
+              value={newSKU.quantity}
+              onChange={(e) => setNewSKU({ ...newSKU, quantity: e.target.value })}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <input
+              type="number"
+              placeholder="Price"
+              value={newSKU.price}
+              onChange={(e) => setNewSKU({ ...newSKU, price: e.target.value })}
+              required
+              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Create SKU
+            </button>
           </form>
+        )}
+
+        {/* SKU Details */}
+        {skuDetails.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">SKU Details</h2>
+            <table className="min-w-full bg-white rounded-lg shadow-lg">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="px-6 py-3 text-gray-800">SKU ID</th>
+                  <th className="px-6 py-3 text-gray-800">Options</th>
+                  <th className="px-6 py-3 text-gray-800">Quantity</th>
+                  <th className="px-6 py-3 text-gray-800">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {skuDetails.map((sku) => (
+                  <tr key={sku._id} className="border-t border-gray-200 hover:bg-gray-50">
+                    <td className="px-6 py-4">{sku._id}</td>
+                    <td className="px-6 py-4">
+                      {Object.entries(sku.optionValues).map(([key, value]) => (
+                        <span key={key}>
+                          <strong>{key}:</strong> {value} <br />
+                        </span>
+                      ))}
+                    </td>
+                    <td className="px-6 py-4">{sku.quantity}</td>
+                    <td className="px-6 py-4">${sku.price}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
