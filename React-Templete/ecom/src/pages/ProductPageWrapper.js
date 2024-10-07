@@ -3,13 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const ProductPage = ({ product }) => {
-  // State for selected quantity
+  // State for selected quantity, size, and color
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
 
-  // Add product to cart (this could integrate with your cart system, API, or global state like Redux)
+  // Handle adding the product to the cart
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} of ${product.productName} to the cart`);
-    // Logic to add product to cart
+    if (!selectedSize || !selectedColor) {
+      alert('Please select a size and color before adding to cart.');
+      return;
+    }
+    console.log(`Added ${quantity} of ${product.productName} (Size: ${selectedSize}, Color: ${selectedColor}) to the cart`);
+    // Logic to add product to cart with the selected options
   };
 
   return (
@@ -30,7 +36,55 @@ const ProductPage = ({ product }) => {
           <p className="text-2xl font-semibold text-indigo-600">${product.price.toFixed(2)}</p>
           <p className="text-gray-700">{product.description}</p>
 
+          {/* Size and Color Selectors */}
+          <div className="space-y-4">
+            {/* Size Selector */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2" htmlFor="size">
+                Size
+              </label>
+              <select
+                id="size"
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                className="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="">Select Size</option>
+                {product.options
+                  ?.find(option => option.name === 'Size')
+                  ?.values.map(size => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* Color Selector */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2" htmlFor="color">
+                Color
+              </label>
+              <select
+                id="color"
+                value={selectedColor}
+                onChange={(e) => setSelectedColor(e.target.value)}
+                className="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="">Select Color</option>
+                {product.options
+                  ?.find(option => option.name === 'Color')
+                  ?.values.map(color => (
+                    <option key={color} value={color}>
+                      {color}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          </div>
+
           <div className="flex items-center space-x-4">
+            {/* Quantity Selector */}
             <div>
               <label className="block text-gray-700 font-semibold mb-2" htmlFor="quantity">
                 Quantity
@@ -38,7 +92,7 @@ const ProductPage = ({ product }) => {
               <div className="flex items-center">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="bg-gray-200 px-2 py-1 rounded-l hover:bg-gray-300" 
+                  className="bg-gray-200 px-2 py-1 rounded-l hover:bg-gray-300"
                 >
                   -
                 </button>
@@ -52,6 +106,7 @@ const ProductPage = ({ product }) => {
               </div>
             </div>
 
+            {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
               className="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition duration-300"
@@ -131,8 +186,6 @@ const ProductPageWrapper = () => {
     fetchProduct();
 }, [id]);
 
-
-  
   // Handle loading and error states
   if (loading) {
       return <Loader />;

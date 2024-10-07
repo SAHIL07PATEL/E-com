@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons';
 
-
 const Footer = () => {
   return (
     <footer className="bg-gray-800 text-white py-8">
@@ -54,7 +53,6 @@ const Footer = () => {
               </a>
             </div>
           </div>
-
 
         </div>
 
