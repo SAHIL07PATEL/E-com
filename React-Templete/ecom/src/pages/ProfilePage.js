@@ -126,7 +126,7 @@ const ProfilePage = () => {
           setLoading(false);
         });
     }
-  }, [navigate]);
+  }, []);
 
   if (loading) {
     return <Loader />;

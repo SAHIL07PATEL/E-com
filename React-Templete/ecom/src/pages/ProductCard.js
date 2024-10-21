@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import { useFavorites } from '../Context/FavoritesContext';
 
 const ProductCard = ({ product }) => {
-  const { _id, productName, description, price, ImgUrl } = product; // Use `productName` instead of `name`
+  const { _id, productName, description, price, imgUrl } = product; // Use `productName` instead of `name`
   const { addToFavorites } = useFavorites();
 
   const handleAddToCart = () => {
@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
       <div className="relative">
         <Link to={`/product/${_id}`}>
-          <img src={ImgUrl} alt={productName} className="w-full h-48 object-cover" />
+          <img src={imgUrl} alt={productName} className="w-full h-48 object-cover object-top" />
         </Link>
         <div className="absolute top-2 right-2 flex space-x-2">
           <button

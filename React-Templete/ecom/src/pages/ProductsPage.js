@@ -117,11 +117,6 @@ const ProductsPage = () => {
             <SlidersHorizontal className="mx-auto h-16 w-16 text-gray-400 mb-4" />
             <p className="text-xl mb-4 text-gray-600">No products found</p>
             <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory('All');
-                setSortBy('default');
-              }}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Reset Filters
