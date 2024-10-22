@@ -9,11 +9,13 @@ const Navbar = () => {
 
   // Check if token exists in sessionStorage
   useEffect(() => {
+     // eslint-disable-next-line no-unused-vars
     const token = sessionStorage.getItem('token');
   }, []);
 
   const handleNavigate = (e) => {
     e.preventDefault();
+     // eslint-disable-next-line no-unused-vars
     const token = sessionStorage.getItem('token');
     if (token) {
       navigate('/profile');
@@ -25,6 +27,7 @@ const Navbar = () => {
 
   const handleNavigateCart = (e) => {
     e.preventDefault();
+     // eslint-disable-next-line no-unused-vars
     const token = sessionStorage.getItem('token');
     if (token) {
       navigate('/cart');
