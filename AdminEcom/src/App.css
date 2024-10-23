@@ -1,0 +1,6 @@
+.content-area {
+  margin-left: 250px; /* Adjust according to the sidebar width */
+  padding: 20px;
+  width: calc(100% - 250px); /* Adjust the width to take into account the sidebar */
+  overflow: auto; /* Ensures content can scroll if needed */
+}

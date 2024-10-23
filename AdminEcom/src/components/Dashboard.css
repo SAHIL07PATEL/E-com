@@ -1,0 +1,51 @@
+/* Dashboard.css */
+
+.dashboard-card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .icon-container {
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .dashboard-icon {
+    font-size: 30px;
+    color: #007bff;
+  }
+  
+  .user-card .dashboard-icon {
+    color: #007bff;
+  }
+  
+  .product-card .dashboard-icon {
+    color: #28a745;
+  }
+  
+  .order-card .dashboard-icon {
+    color: #ffc107;
+  }
+  
+  .count-text {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+  
+  /* Responsive Margins */
+  .ml-3 {
+    margin-left: 15px;
+  }
+  
