@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './Pages/Home';
@@ -11,6 +10,7 @@ import ProductList from './Pages/ProductList';
 import ProductDetails from './Pages/ProductDetils';
 import AddToCartPage from './Pages/AddToCartPage';
 import Profile from './Pages/Profile';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   return (
@@ -35,6 +35,7 @@ const App = () => {
           </Routes>
         </main>
         <Footer />
+        <ToastContainer position="bottom-right" />
       </div>
     </Router>
   );

@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
-    const handleLogin = async (e) =>{
-        e.preventDefault();
-        const response = await fetch("http://localhost:3001/users")
-        const users = await response.json();
-        const user =  users.find((u)=>u.email === username && u.password === password )
-        if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-            window.location.href = '/welcome'; 
-          } else {
-            alert('Invalid credentials');
+    
+    const handleLogin = (e) => {
+      e.preventDefault();
+      fetch("http://localhost:3001/users")
+        .then(response => {
+          if (!response.ok) {
+            toast.error('Network response was not ok');
           }
-    }
+          return response.json();
+        })
+        .then(users => {
+          const user = users.find(u => u.email === username && u.password === password);
+          if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+            toast.success("Login Successfully")
+            window.location.href = '/welcome';
+          } else {
+            toast.error('Invalid Data');
+          }
+        })
+    };
+    
     return (
         <div>
             <section className="bg-gray-50 dark:bg-gray-900">
@@ -107,7 +119,7 @@ const Login = () => {
                     </div>
                 </div>
             </section>
-
+            <ToastContainer position="bottom-right" />
 
         </div>
     );

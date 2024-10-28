@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/products');
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
+    const fetchProducts = () => {
+      fetch('http://localhost:3001/products')
+        .then(response => {
+          if (!response.ok) {
+            console.log('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setProducts(data);
+        })
     };
+
     fetchProducts();
   }, []);
 
@@ -40,7 +44,7 @@ const ProductList = () => {
               />
               <div className="p-4">
                 <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
-                <p className="text-gray-600 mb-2">${product.price.toFixed(2)}</p>
+                <p className="text-gray-600 mb-2">${product.price}</p>
                 {/* Star Rating */}
                 <p className="text-gray-500 mb-4">{product.description}</p>
                 <Link

@@ -1,9 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Container, Row, Col } from 'react-bootstrap';
 import { FaUsers, FaBox, FaShoppingCart } from 'react-icons/fa';
 import './Dashboard.css'; // Custom CSS for additional styles
 
 const Dashboard = () => {
+
+  const [users, setUsers] = useState();
+  const [products, setProducts] = useState();
+  const [cart, setCart] = useState();
+
+  useEffect(() => {
+
+    // USER
+    fetch("http://localhost:3001/users", {
+      method: "GET",
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => setUsers(data))
+
+
+
+    // Products
+    fetch("http://localhost:3001/products", {
+      method: "GET",
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+
+
+    // AddtoCart Products
+    fetch("http://localhost:3001/addtocart", {
+      method: "GET",
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => setCart(data[0].quantity))
+  }, [cart  ]);
+
+  console.log();
+  
+
   return (
     <Container fluid>
       <Row className="mt-4">
@@ -15,7 +59,7 @@ const Dashboard = () => {
               </div>
               <div className="ml-3">
                 <Card.Title>Total Users</Card.Title>
-                <Card.Text className="count-text">120</Card.Text>
+                <Card.Text className="count-text">{users ? (users.length) : ("0")}</Card.Text>
               </div>
             </Card.Body>
           </Card>
@@ -28,7 +72,7 @@ const Dashboard = () => {
               </div>
               <div className="ml-3">
                 <Card.Title>Total Products</Card.Title>
-                <Card.Text className="count-text">45</Card.Text>
+                <Card.Text className="count-text">{products ? (products.length) : ("0")}</Card.Text>
               </div>
             </Card.Body>
           </Card>
@@ -41,7 +85,7 @@ const Dashboard = () => {
               </div>
               <div className="ml-3">
                 <Card.Title>Total Orders</Card.Title>
-                <Card.Text className="count-text">30</Card.Text>
+                <Card.Text className="count-text">{cart ? (cart) : ("0")}</Card.Text>
               </div>
             </Card.Body>
           </Card>

@@ -1,0 +1,107 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "John Doe",
+      "password": "123",
+      "email": "john@example.com"
+    },
+    {
+      "id": "2",
+      "username": "Jane Smith",
+      "password": "123",
+      "email": "jane@example.com"
+    },
+    {
+      "id": "3",
+      "username": "Alice Johnson",
+      "password": "123",
+      "email": "alice@example.com"
+    },
+    {
+      "id": "4",
+      "username": "Bob Brown",
+      "password": "123",
+      "email": "bob@example.com"
+    },
+    {
+      "id": "48ce",
+      "username": "sahildholriya",
+      "email": "sahildholriya7@gmail.com",
+      "password": "12345678",
+      "cpassword": "12345678"
+    },
+    {
+      "id": "ed79",
+      "username": "sahil dholriya",
+      "email": "sahildholriya7@gmail.com",
+      "password": "12345678",
+      "cpassword": "12345678"
+    },
+    {
+      "id": "e1a4",
+      "username": "admin",
+      "email": "a@gmail.com",
+      "password": "123",
+      "cpassword": "123"
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "name": "Smartphone",
+      "description": "Latest model smartphone",
+      "price": 699.99,
+      "image": "./images/product-01.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Laptop",
+      "description": "High-performance laptop",
+      "price": 1299.99,
+      "image": "./images/product-02.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Headphones",
+      "description": "Noise-cancelling headphones",
+      "price": 199.99,
+      "image": "./images/product-03.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Wireless Mouse",
+      "description": "Ergonomic wireless mouse",
+      "price": 49.99,
+      "image": "./images/product-04.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Smart Watch",
+      "description": "Smart watch with health tracking",
+      "price": 249.99,
+      "image": "./images/product-05.jpg"
+    },
+    {
+      "id": "6",
+      "name": "Bluetooth Speaker",
+      "description": "Portable Bluetooth speaker",
+      "price": 79.99,
+      "image": "./images/product-06.jpg"
+    },
+    {
+      "id": "7",
+      "name": "Gaming Console",
+      "description": "Next-gen gaming console",
+      "price": 499.99,
+      "image": "./images/product-07.jpg"
+    },
+    {
+      "id": "8",
+      "name": "4K Monitor",
+      "description": "High-resolution 4K monitor",
+      "price": 299.99,
+      "image": "./images/product-08.jpg"
+    }
+  ]
+}

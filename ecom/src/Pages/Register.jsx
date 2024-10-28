@@ -1,37 +1,61 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Register = () => {
-
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [cpassword, setCpassword] = useState('');
+  const [user, setUser] = useState();
+ const navigate = useNavigate()
 
-
-  
-
-  const handleRegister = async (e) =>{
-    e.preventDefault();
-    const newUser = {username,email,password,cpassword}
-
-
-    const response = await fetch("http://localhost:3001/users",{
-      method:"POST",
-      headers:{'content-type':'application/json'},
-      body:JSON.stringify(newUser)
+  useEffect(() => {
+    fetch("http://localhost:3001/users", {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
     })
+      .then((res) => res.json())
+      .then((data) => setUser(data))
+  }, []);
 
-    if(response.ok){
-      alert("Register Successfull");
-      setUsername('')
-      setPassword('')
-    }else {
-      alert('Registration failed. Please try again.');
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const newUser = { username, email, password, cpassword };
+
+    const findMail = user.find((u) => u.email === email)
+
+    if (!findMail) {
+      if (password === cpassword) {
+        fetch("http://localhost:3001/users", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUser),
+        })
+          .then(response => {
+            if (response.ok) {
+              setUsername('');
+              setEmail('');
+              setPassword('');
+              setCpassword('');
+              toast.success("Registration Successful");
+              navigate('/login')
+            } else {
+              toast.error('Registration failed. Please try again.');
+            }
+          })
+      } else {
+        toast.error("PassWord Do Not Match")
+      }
+    } else {
+      toast.error("Email ALredy Exists")
     }
 
-  } 
-  
+
+
+  };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -55,7 +79,7 @@ const Register = () => {
                   id="username"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 transition duration-200 ease-in-out dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="your_username"
-                  onChange={(e)=>setUsername(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
@@ -72,7 +96,7 @@ const Register = () => {
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 transition duration-200 ease-in-out dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
-                  onChange={(e)=>setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -89,7 +113,7 @@ const Register = () => {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 transition duration-200 ease-in-out dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e)=>setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
@@ -106,7 +130,7 @@ const Register = () => {
                   id="confirm-password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 block w-full p-3 transition duration-200 ease-in-out dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e)=>setCpassword(e.target.value)}
+                  onChange={(e) => setCpassword(e.target.value)}
                   required
                 />
               </div>
@@ -129,6 +153,7 @@ const Register = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="bottom-right" />
     </section>
   );
 };

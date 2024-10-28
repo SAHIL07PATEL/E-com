@@ -6,6 +6,10 @@ import Dashboard from './components/Dashboard';
 import Users from './components/Users';
 // import Products from './components/Products';
 import './App.css'; // Custom CSS for content adjustment
+import Products from './components/Products';
+import ProductDetails from './components/ProductDetails';
+import AddProductAdmin from './components/AddProductAdmin';
+import EditUser from './components/EditUser';
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -18,7 +22,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar bg="dark" variant="dark" expand="lg">
+        <Navbar bg="dark" variant="dark" expand="lg" className='adminpanel'>
           <Container>
             <Navbar.Brand href="/">Admin Panel</Navbar.Brand>
           </Container>
@@ -30,7 +34,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<Users />} />
-              {/* <Route path="/products" element={<Products />} /> */}
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
+              <Route path="/addproducts" element={<AddProductAdmin />} />
+              <Route path="/edituser/:eid" element={<EditUser />} />
             </Routes>
           </main>
         </div>

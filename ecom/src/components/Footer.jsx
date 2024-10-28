@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -43,6 +42,8 @@ const Footer = () => {
         </div>
 
         {/* Bottom Text */}
+
+        
         <div className="mt-6 border-t border-gray-600 pt-4 text-center text-gray-400">
           <p>© 2024 ShopLogo. All rights reserved.</p>
         </div>

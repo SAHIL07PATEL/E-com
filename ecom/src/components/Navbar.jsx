@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -13,16 +13,16 @@ const Navbar = () => {
     if (user) {
       setIsLoggedIn(true);
 
-      // Fetch initial cart count from localStorage
+
       const cartKey = `cart_${JSON.parse(user).id}`;
       const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
       setCartCount(cart.length);
       
     } else {
       setIsLoggedIn(false);
-      setCartCount(0); // No items in cart if the user is not logged in
+      setCartCount(0);
     }
-  }, []); // This useEffect will run on component mount and when the page is refreshed
+  }, []); 
 
   const handleCartClick = (e) => {
     e.preventDefault();
